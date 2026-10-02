@@ -1,129 +1,59 @@
-# 🍽️ Recipe Traffic Prediction  
-**Predicting High-Traffic Recipes for Business Optimization**
+# Recipe Traffic Prediction
 
-**Author:** Eleanor Koh  
-**Date:** January 2025  
-**Credential:** DataCamp – Data Scientist Certification (Capstone Project)
+Predicting whether a recipe will draw high traffic, from its category and
+nutritional metadata. DataCamp Data Scientist Professional capstone, January 2025.
 
 ---
 
-## 📌 Project Overview
+## The brief
 
-This project focuses on predicting whether a recipe will generate **high user traffic**, enabling a digital food platform to make better content and promotion decisions.
+A food platform wants to decide which recipes to promote on its homepage. The
+cost of being wrong is asymmetric: promoting a recipe nobody reads wastes the
+slot, while missing a good one costs comparatively little. So the target was
+**precision of at least 80%**, not accuracy.
 
-The problem is framed as a **binary classification task**, with a strong emphasis on **precision**, reflecting the real business cost of promoting recipes that fail to attract users.
+## Result
 
----
+Logistic regression, on the original features:
 
-## 🎯 Business Objective
+| | F1 | AUC | Precision | Recall |
+|---|---|---|---|---|
+| Logistic regression | 0.809 | 0.870 | **0.87** | 0.76 |
+| Gradient boosting (tuned, engineered features) | 0.828 | 0.837 | 0.74 | 0.94 |
 
-- **Primary goal:** Identify high-traffic recipes with **≥ 80% precision**
-- **Key constraint:** Minimize false positives (promoting low-performing recipes)
-- **Outcome:** Support content curation and marketing prioritization using data-driven insights
+Gradient boosting wins on F1 and finds far more of the high-traffic recipes
+(recall 0.94 against 0.76). It also misses the brief: at 0.74 precision it falls
+below the 80% floor, so a quarter of what it promotes is wrong. Recommended the
+logistic model — it clears the constraint that was actually set, and its
+coefficients can be read by the people deciding what to promote.
 
----
+A useful reminder that the best model by the usual aggregate metric can be the
+wrong model for the stated objective.
 
-## 📊 Data & Features
+## What drove the prediction
 
-### Dataset Characteristics
-- Recipe metadata, categories, and nutritional information
-- Target variable: **High Traffic (Yes / No)**
+Recipe category, by a wide margin — vegetable, potato and pork most strongly
+associated with high traffic. Nutritional variables (calories, protein, sugar)
+were statistically significant but weak. Traffic follows what kind of dish it is,
+not its nutritional profile.
 
-### Data Preparation
-- **Missing values:**  
-  ~5.5% missing in nutritional variables, imputed using median values
-- **Outliers:**  
-  Retained based on domain reasoning (extreme values may reflect valid recipes)
-- **Transformations:**  
-  Box-Cox transformation applied to reduce skewness
-- **Feature Engineering:**  
-  - Nutritional values per serving  
-  - Encoded categorical recipe types
+## Handling of the data
 
----
+- Roughly 5.5% missing in the nutritional columns, median-imputed.
+- Outliers retained. Extreme values here are plausible recipes, not errors.
+- Box-Cox transform on skewed nutritional variables.
+- Features added for per-serving nutritional values; categories encoded.
 
-## 🔍 Exploratory Data Analysis (EDA)
-
-### Key Insights
-- **Recipe category** is the strongest predictor of traffic
-- Categories with strong positive association:
-  - **Vegetable**
-  - **Potato**
-  - **Pork**
-- Nutritional variables (calories, protein, sugar) show weaker but statistically significant effects
-
-**EDA takeaway:**  
-Traffic is driven more by **content type** than nutritional composition alone.
+Models compared: logistic regression, random forest, SVM, gradient boosting,
+each on original and engineered feature sets.
 
 ---
 
-## 🤖 Models Evaluated
+## Files
 
-The following models were trained and compared:
+- `submission.ipynb` — the submitted notebook, outputs included
+- `presentation_deck.pdf` — the accompanying presentation
+- `Instruction.pdf` — the original brief
+- `recipe_site_traffic_2212.csv` — the provided dataset
 
-- Logistic Regression (interpretable baseline)
-- Random Forest (non-linear ensemble)
-- Support Vector Machine
-- Gradient Boosting (high-performance ensemble)
-
----
-
-## 📈 Model Performance
-
-### Final Model Selection
-
-**Logistic Regression (Original Dataset)**  
-- **Precision:** **87%** ✅ (exceeds business requirement)
-- **F1-score:** 0.815
-- High interpretability and stability
-
-**Gradient Boosting (Engineered Features)**  
-- **F1-score:** **0.828** (best overall balance)
-- Higher recall, slightly lower precision
-
-**Model choice rationale:**  
-Logistic Regression was recommended due to its alignment with the business objective, interpretability, and ease of deployment.
-
----
-
-## 🔑 Feature Importance
-
-Top predictors of high-traffic recipes:
-1. **Vegetable**
-2. **Potato**
-3. **Pork**
-
-These features were:
-- Statistically significant in EDA
-- Consistently important across models
-
----
-
-## 💡 Business Recommendations
-
-1. **Content Optimization**
-   - Prioritize promotion of recipes in high-performing categories
-   - Use model outputs to guide homepage and campaign placement
-
-2. **Data Enrichment**
-   - Collect additional nutritional attributes (e.g. fat content)
-   - Incorporate user behavior data to improve demand modeling
-
----
-
-## 🚀 Key Takeaways
-
-- Achieved **87% precision**, exceeding the required threshold
-- Demonstrated the value of **interpretable models** in business contexts
-- Showcased a complete data science workflow:
-  - EDA → Feature Engineering → Modeling → Business Translation
-
----
-
-## 🔮 Future Work
-
-- Integrate user interaction data (clicks, saves, dwell time)
-- Explore time-based trends in recipe popularity
-- Deploy the model as a real-time content scoring tool
-
-
+Dataset supplied by DataCamp as part of the certification.
