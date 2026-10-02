@@ -1,36 +1,55 @@
 # Analysis
 
-Research notebooks. Two projects, both finished enough to have a conclusion.
+Two pieces of research carried to a conclusion, and the working notebooks that
+got there. One asks how Singapore's COE premium is actually formed. The other is
+a classification problem where the right model was the one that lost on F1.
+
+This is a notebook collection, not a package. Nothing here is installable and
+nothing here runs on a schedule. Read the finding, then the notebook if you want
+to check it.
 
 ---
 
-## COE Price Dynamics — Singapore
+## COE Price Dynamics, Singapore
 
 [`coe-price-dynamics/`](coe-price-dynamics/)
 
-Singapore caps the vehicle population and auctions the right to own a car. The
-population has been flat since 2016 and premiums have not been. This asks why.
+Singapore caps the vehicle population and auctions the ten-year right to own a
+car. Category A population has been statistically flat since 2016. Premiums have
+not been. The question is why the two came apart.
 
-Finding: stock-level supply does not set the price. Deregistrations drive the
-quota, the quota drives bidding activity, and it is bids received and new
-registrations that Granger-cause premium changes. The premium behaves like an
-auction clearing price under competition and expectations, not an equilibrium
-price under a supply cap.
+The chain the data supports: deregistrations Granger-cause the quota, which is
+what the policy is designed to do, since the quota is derived from cars leaving
+the fleet. The quota then moves bidding activity and new registrations. But the
+quota does not directly move premiums. Bids received and new registrations do.
 
-ADF tests, first-differencing, Granger causality, lagged correlations, on 20+
-years of LTA and data.gov.sg series.
+So the quota sets how many certificates exist and competition among bidders sets
+what they cost. Capping the population constrains the first and leaves the second
+alone. A premium is an auction clearing price, and reading it as a supply and
+demand equilibrium explains very little of its variance.
+
+Monthly LTA and data.gov.sg series, 2002 to 2025. ADF tests, first differencing,
+Spearman correlations on levels and differences, Granger causality along the
+chain. The two demand-to-premium results are the weakest links in it and the
+notebook README says exactly how weak.
 
 ## Recipe Traffic Prediction
 
 [`datacamp-capstone/`](datacamp-capstone/)
 
 Binary classification on recipe metadata, predicting whether a recipe draws high
-traffic. The business constraint was precision, not accuracy — a false positive
-means promoting a recipe that nobody reads. Logistic regression reached 87%
-precision against an 80% target, and was chosen over a gradient-boosted model
-with a better F1 because the brief asked for precision and interpretability.
+traffic. The cost of error is asymmetric, so the brief set a floor of 80%
+precision rather than an accuracy target.
 
-Submitted as the DataCamp Data Scientist Professional capstone.
+Logistic regression reached 0.87 precision and 0.81 F1. A tuned gradient boosting
+model on engineered features reached 0.83 F1 and 0.94 recall, and 0.74 precision,
+which is below the floor. Recommended the logistic model: it clears the constraint
+that was set, and its coefficients can be read by the people deciding what to
+promote. The best model on the usual aggregate metric was the wrong model for the
+stated objective.
+
+The strongest predictor was recipe category, not nutrition. Submitted as the
+DataCamp Data Scientist Professional capstone, January 2025.
 
 ---
 
